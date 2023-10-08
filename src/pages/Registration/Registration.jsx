@@ -1,5 +1,3 @@
-import registrationImg from "../../assets/registration-page-img.png";
-
 const registrationInputData = [
   { type: "email", label: "Email Address", id: "email" },
   { type: "text", label: "Full Name", id: "name" },
