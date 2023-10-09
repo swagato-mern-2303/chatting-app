@@ -15,7 +15,7 @@ export default {
         "secondary-accent": "#EA6C00",
       },
       backgroundImage: {
-        "registration-page": "url(./src/assets/registration-page-img.png)",
+        "registration-page": "url('./src/assets/registration-page-img.png')",
       },
     },
   },
