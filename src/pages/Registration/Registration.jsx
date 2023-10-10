@@ -52,7 +52,7 @@ function RegistrationInput({ type, label, id }) {
     <>
       <div className="relative">
         <label
-          className="absolute left-[29px] top-0 w-[155px] -translate-y-1/2 bg-white py-3 text-center text-[13.76px] font-semibold text-primary-color-400/70"
+          className="absolute left-[29px] top-0 w-[155px] -translate-y-1/2 bg-white text-center text-[13.76px] font-semibold text-primary-color-400/70"
           htmlFor={id}
         >
           {label}
