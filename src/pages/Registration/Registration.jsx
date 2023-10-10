@@ -7,7 +7,7 @@ const registrationInputData = [
 function Registration() {
   return (
     <div className="font-nunito">
-      <div className="flex items-center">
+      <div className="flex">
         <div className="w-full xl:w-1/2">
           <div className="flex min-h-screen flex-col items-center justify-center bg-registration-page bg-cover bg-center bg-no-repeat p-5 xl:items-end xl:bg-none">
             <div className="rounded-lg bg-white p-5 xl:mr-[70px] xl:p-0">
@@ -41,7 +41,7 @@ function Registration() {
             </div>
           </div>
         </div>
-        <div className="hidden h-screen w-1/2 bg-registration-page bg-cover bg-center bg-no-repeat xl:block"></div>
+        <div className="hidden w-1/2 bg-registration-page bg-cover bg-center bg-no-repeat xl:block"></div>
       </div>
     </div>
   );
