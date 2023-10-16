@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
 function Registration() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -85,6 +87,8 @@ function Registration() {
                   input={password}
                   onSetInput={setPassword}
                   errors={errors.password}
+                  showPassword={showPassword}
+                  onShowPassword={setShowPassword}
                 >
                   Password
                 </RegistrationInput>
@@ -119,6 +123,8 @@ function RegistrationInput({
   input,
   onSetInput,
   errors,
+  showPassword,
+  onShowPassword,
 }) {
   return (
     <>
@@ -127,11 +133,26 @@ function RegistrationInput({
           id={id}
           value={input}
           onChange={(e) => onSetInput(e.target.value)}
-          className={`peer w-full rounded-[8.6px] border-2 p-4 text-[20.641px] font-semibold text-primary-color-400 autofill:shadow-[inset_0_0_0_1000px_white] focus:outline-none md:p-[27px] ${
+          className={`peer w-full rounded-[8.6px] border-2 px-[27px] py-4 text-[20.641px] font-semibold text-primary-color-400 autofill:shadow-[inset_0_0_0_1000px_white] focus:outline-none md:py-[27px] ${
             errors ? "border-red-500" : "border-primary-color-400/30"
           }`}
-          type={type}
+          type={
+            type === "password" ? (showPassword ? "text" : "password") : type
+          }
         />
+        <button
+          onClick={() => onShowPassword((current) => !current)}
+          type="button"
+          className={`absolute right-1 top-1/2 -translate-y-1/2 text-primary-color-400/40  ${
+            type === "password" ? null : "hidden"
+          }`}
+        >
+          {showPassword ? (
+            <AiFillEyeInvisible size={24} />
+          ) : (
+            <AiFillEye size={24} />
+          )}
+        </button>
         {errors && (
           <p className="absolute left-[2.5%] top-[105%] text-xs font-bold leading-none text-red-500">
             {errors}
