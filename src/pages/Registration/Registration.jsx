@@ -52,7 +52,7 @@ function Registration() {
                 <p className="text-[13.338px] text-primary-color-400">
                   Already have an account ?{" "}
                   <a
-                    className="hover:text-orange-8run00 font-bold text-secondary-accent"
+                    className="font-bold text-secondary-accent hover:text-orange-800"
                     href=""
                   >
                     Sign In
