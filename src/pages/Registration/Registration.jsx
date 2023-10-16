@@ -5,9 +5,46 @@ function Registration() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
+  const [errors, setErrors] = useState({});
+
+  const [isSubmit, setIsSubmit] = useState(false);
+
+  function validate(email, name, password) {
+    const errors = {};
+    const emailRegEx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const passwordRegEx = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+
+    email
+      ? emailRegEx.test(email)
+        ? null
+        : (errors.email = "⛔ Invalid email address")
+      : (errors.email = "❌ Email is required");
+    name ? null : (errors.name = "❌ Name is required");
+    password
+      ? passwordRegEx.test(password)
+        ? null
+        : (errors.password =
+            "⛔ Password must have atleast 8 characters and both uppercase and lowercase characters")
+      : (errors.password = "❌ Password is required");
+
+    return errors;
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrors(validate(email, name, password));
+    setIsSubmit(true);
   };
+
+  // !placeholder, need to improve later
+  isSubmit && Object.keys(errors).length === 0
+    ? console.log(
+        "email : " + email,
+        "name : " + name,
+        "password : " + password,
+      )
+    : null;
+
   return (
     <div className="font-nunito">
       <div className="flex">
@@ -30,10 +67,16 @@ function Registration() {
                   id="emial"
                   input={email}
                   onSetInput={setEmail}
+                  errors={errors.email}
                 >
                   Email Adress
                 </RegistrationInput>
-                <RegistrationInput id="name" input={name} onSetInput={setName}>
+                <RegistrationInput
+                  id="name"
+                  input={name}
+                  onSetInput={setName}
+                  errors={errors.name}
+                >
                   Full Name
                 </RegistrationInput>
                 <RegistrationInput
@@ -41,10 +84,11 @@ function Registration() {
                   id="password"
                   input={password}
                   onSetInput={setPassword}
+                  errors={errors.password}
                 >
                   Password
                 </RegistrationInput>
-                <button className="rounded-[86px] bg-primary-accent py-5 text-[20.64px] font-semibold text-white duration-200 hover:bg-blue-800">
+                <button className="mt-2 rounded-[86px] bg-primary-accent py-5 text-[20.64px] font-semibold text-white duration-200 hover:bg-blue-800">
                   Sign up
                 </button>
               </form>
@@ -68,7 +112,14 @@ function Registration() {
   );
 }
 
-function RegistrationInput({ type = "text", id, children, input, onSetInput }) {
+function RegistrationInput({
+  type = "text",
+  id,
+  children,
+  input,
+  onSetInput,
+  errors,
+}) {
   return (
     <>
       <div className="relative">
@@ -76,13 +127,19 @@ function RegistrationInput({ type = "text", id, children, input, onSetInput }) {
           id={id}
           value={input}
           onChange={(e) => onSetInput(e.target.value)}
-          className="peer w-full rounded-[8.6px] border-2 border-primary-color-400/30 p-4 text-[20.641px] font-semibold text-primary-color-400 autofill:shadow-[inset_0_0_0_1000px_white] focus:outline-none md:p-[27px]"
+          className={`peer w-full rounded-[8.6px] border-2 p-4 text-[20.641px] font-semibold text-primary-color-400 autofill:shadow-[inset_0_0_0_1000px_white] focus:outline-none md:p-[27px] ${
+            errors ? "border-red-500" : "border-primary-color-400/30"
+          }`}
           type={type}
         />
+        {errors && (
+          <p className="absolute left-[2.5%] top-[105%] text-xs font-bold leading-none text-red-500">
+            {errors}
+          </p>
+        )}
         <label
           htmlFor={id}
-          style={{ pointerEvents: "none" }}
-          className={`absolute left-[29px] w-[155px] -translate-y-1/2 cursor-text bg-white text-center text-[13.76px] font-semibold text-primary-color-400/70 duration-150 peer-focus:top-0 peer-focus:scale-100 ${
+          className={`pointer-events-none absolute left-[29px] w-[155px] -translate-y-1/2 cursor-text bg-white text-center text-[13.76px] font-semibold text-primary-color-400/70 duration-150 peer-focus:top-0 peer-focus:scale-100 ${
             input ? "top-0 scale-100" : "top-1/2 scale-125"
           }`}
         >
