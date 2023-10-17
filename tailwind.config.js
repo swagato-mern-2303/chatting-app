@@ -16,6 +16,7 @@ export default {
       },
       backgroundImage: {
         "registration-page": "url('./assets/registration-page-img.png')",
+        "login-page": "url('./assets/login-page-img.png')",
       },
     },
   },
