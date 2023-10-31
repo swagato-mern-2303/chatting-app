@@ -1,16 +1,35 @@
 import { useState } from "react";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 import googleIcon from "../../assets/google-icon.png";
-import { Link } from "react-router-dom";
+import { Flip, ToastContainer, toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 function Registration() {
+  const navigate = useNavigate();
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [errors, setErrors] = useState({});
 
-  const [isSubmit, setIsSubmit] = useState(false);
+  const handleLoginWithGoogle = function () {
+    signInWithPopup(auth, provider)
+      .then(() => {
+        setTimeout(navigate("/"), 1000);
+      })
+      .catch((error) => {
+        console.log(error.code);
+      });
+  };
 
   function validate(email, password) {
     const errors = {};
@@ -35,24 +54,37 @@ function Registration() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors(validate(email, password));
-    setIsSubmit(true);
+    !Object.keys(validate(email, password)).length &&
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          setTimeout(navigate("/"), 1000);
+        })
+        .catch((error) => {
+          error.code.includes("auth/invalid-login-credentials") &&
+            toast.error("Invalid email and password combination");
+        });
   };
-
-  // !placeholder, need to improve later
-  isSubmit && Object.keys(errors).length === 0
-    ? console.log("email : " + email, "password : " + password)
-    : null;
 
   return (
     <div className="font-open-sans">
       <div className="flex">
+        <ToastContainer
+          transition={Flip}
+          theme="colored"
+          hideProgressBar
+          autoClose={1000}
+          position="top-center"
+        />
         <div className="w-full xl:w-1/2">
-          <div className="bg-login-page flex min-h-screen flex-col items-center justify-center bg-cover bg-center bg-no-repeat p-5 xl:items-end xl:bg-none">
+          <div className="flex min-h-screen flex-col items-center justify-center bg-login-page bg-cover bg-center bg-no-repeat p-5 xl:items-end xl:bg-none">
             <div className="rounded-lg bg-white p-5 xl:mr-[140px] xl:p-0">
               <h1 className="mb-[28px] text-[34px] font-bold leading-tight text-primary-color-500">
                 Login to your account!
               </h1>
-              <div className="mb-8 flex max-w-[220px] cursor-pointer select-none items-center gap-x-2.5 rounded-[8.34px] border border-primary-color-500/30 py-5 pl-7 text-[13.4px] font-semibold text-primary-color-500 md:mb-[62px]">
+              <div
+                className="mb-8 flex max-w-[220px] cursor-pointer select-none items-center gap-x-2.5 rounded-[8.34px] border border-primary-color-500/30 py-5 pl-7 text-[13.4px] font-semibold text-primary-color-500 duration-200 hover:shadow-lg md:mb-[62px]"
+                onClick={handleLoginWithGoogle}
+              >
                 <img src={googleIcon} alt="Google icon" />
                 <p>Login with Google</p>
               </div>
@@ -82,7 +114,7 @@ function Registration() {
                   Password
                 </RegistrationInput>
                 <button className="mt-2 rounded-[8.6px] bg-primary-accent py-5 text-[20.64px] font-semibold text-white duration-200 hover:bg-blue-800">
-                  Sign up
+                  Login to Continue
                 </button>
               </form>
               <div className="mx-auto mt-[20px] max-w-[370px] text-center font-open-sans xl:mx-0">
@@ -95,11 +127,19 @@ function Registration() {
                     Sign Up
                   </Link>
                 </p>
+                <p className="text-[13.338px] text-primary-color-500">
+                  <Link
+                    to="/forgotpassword"
+                    className="font-bold text-secondary-accent hover:text-orange-800"
+                  >
+                    Forgot Password
+                  </Link>
+                </p>
               </div>
             </div>
           </div>
         </div>
-        <div className="bg-login-page hidden w-1/2 bg-cover bg-center bg-no-repeat xl:block"></div>
+        <div className="hidden w-1/2 bg-login-page bg-cover bg-center bg-no-repeat xl:block"></div>
       </div>
     </div>
   );
@@ -143,7 +183,7 @@ function RegistrationInput({
           )}
         </button>
         {errors && (
-          <p className="absolute left-[2.5%] top-[105%] text-xs font-bold leading-none text-red-500">
+          <p className="absolute left-[2.5%] top-[110%] text-xs font-bold leading-none text-red-500">
             {errors}
           </p>
         )}

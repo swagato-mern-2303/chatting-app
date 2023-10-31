@@ -1,16 +1,24 @@
 import { useState } from "react";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, Zoom, toast } from "react-toastify";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 
 function Registration() {
+  const auth = getAuth();
+
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [errors, setErrors] = useState({});
-
-  const [isSubmit, setIsSubmit] = useState(false);
 
   function validate(email, name, password) {
     const errors = {};
@@ -36,21 +44,31 @@ function Registration() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors(validate(email, name, password));
-    setIsSubmit(true);
+    !Object.keys(validate(email, name, password)).length &&
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          sendEmailVerification(auth.currentUser).then(() => {
+            setEmail("");
+            setName("");
+            setPassword("");
+            setTimeout(() => navigate("/login"), 3500);
+            toast.success("Successfully registered. Please verify your email");
+          });
+        })
+        .catch((error) => {
+          error.code.includes("auth/email-already-in-use") &&
+            setErrors({ ...errors, email: "⛔ Email already in use" });
+        });
   };
-
-  // !placeholder, need to improve later
-  isSubmit && Object.keys(errors).length === 0
-    ? console.log(
-        "email : " + email,
-        "name : " + name,
-        "password : " + password,
-      )
-    : null;
 
   return (
     <div className="font-nunito">
       <div className="flex">
+        <ToastContainer
+          position="top-center"
+          transition={Zoom}
+          autoClose={2500}
+        />
         <div className="w-full xl:w-1/2">
           <div className="flex min-h-screen flex-col items-center justify-center bg-registration-page bg-cover bg-center bg-no-repeat p-5 xl:items-end xl:bg-none">
             <div className="rounded-lg bg-white p-5 xl:mr-[70px] xl:p-0">
@@ -155,7 +173,7 @@ function RegistrationInput({
           )}
         </button>
         {errors && (
-          <p className="absolute left-[2.5%] top-[105%] text-xs font-bold leading-none text-red-500">
+          <p className="absolute left-[2.5%] top-[105%] text-sm font-bold leading-none text-red-500">
             {errors}
           </p>
         )}
