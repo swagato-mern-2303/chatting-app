@@ -64,7 +64,7 @@ function Registration() {
           dispatch(userLoginInfo(userCredential.user));
           localStorage.setItem(
             "userLoginInfo",
-            JSON.stringify(userLoginInfo(userCredential.user)),
+            JSON.stringify(userCredential.user),
           );
           setTimeout(navigate("/"), 1000);
         })

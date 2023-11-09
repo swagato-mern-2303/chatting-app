@@ -6,7 +6,9 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
+import placeholderProfileImg from "../../assets/placeholder-profile-img.png";
 
 function Registration() {
   const auth = getAuth();
@@ -46,6 +48,12 @@ function Registration() {
     setErrors(validate(email, name, password));
     !Object.keys(validate(email, name, password)).length &&
       createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          updateProfile(auth.currentUser, {
+            displayName: name,
+            photoURL: placeholderProfileImg,
+          });
+        })
         .then(() => {
           sendEmailVerification(auth.currentUser).then(() => {
             setEmail("");

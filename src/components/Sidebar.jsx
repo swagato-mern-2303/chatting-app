@@ -1,13 +1,14 @@
-import profileImg from "../assets/placeholder-profile-img.png";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineHome, AiFillMessage, AiOutlineBell } from "react-icons/ai";
 import { BsGear } from "react-icons/bs";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userLoginInfo } from "../userSlice";
 
 function Sidebar() {
+  const userData = useSelector((state) => state.userLoginInfo.userLoginInfo);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleSignout = () => {
@@ -29,12 +30,15 @@ function Sidebar() {
             <picture>
               <img
                 className="w-[100px] rounded-full"
-                src={profileImg}
+                src={userData.photoURL}
                 alt="profile image"
               />
             </picture>
           </Link>
         </div>
+        <h1 className="text-xl font-semibold text-white">
+          {userData.displayName}
+        </h1>
         <ul className="mb-[100px] flex flex-col gap-y-[70px]">
           <li>
             <a className="text-[#BAD1FF]">

@@ -1,10 +1,12 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
+import { userLoginInfo } from "../../userSlice";
 
 function Home() {
+  const dispatch = useDispatch();
   const auth = getAuth();
   const userData = useSelector((state) => state.userLoginInfo.userLoginInfo);
   const navigate = useNavigate();
@@ -19,6 +21,8 @@ function Home() {
 
   onAuthStateChanged(auth, (user) => {
     setVerified(user.emailVerified);
+    dispatch(() => userLoginInfo(user));
+    localStorage.setItem("userLoginInfo", JSON.stringify(user));
   });
 
   const [varified, setVerified] = useState(false);
