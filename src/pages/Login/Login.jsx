@@ -9,8 +9,12 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { userLoginInfo } from "../../userSlice";
 
 function Registration() {
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
@@ -56,7 +60,12 @@ function Registration() {
     setErrors(validate(email, password));
     !Object.keys(validate(email, password)).length &&
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
+        .then((userCredential) => {
+          dispatch(userLoginInfo(userCredential.user));
+          localStorage.setItem(
+            "userLoginInfo",
+            JSON.stringify(userLoginInfo(userCredential.user)),
+          );
           setTimeout(navigate("/"), 1000);
         })
         .catch((error) => {

@@ -44,9 +44,10 @@ function ForgotPassword() {
           className="rounded-[8.6px] border-2 px-[27px] py-[20px] text-[20.641px] font-semibold text-primary-color-400 autofill:shadow-[inset_0_0_0_1000px_white] focus:outline-none "
           type="email"
           value={email}
+          placeholder="Enter Your Email"
           onChange={(e) => setEmail(e.target.value)}
         />
-        <div className="mt-3 flex flex-col gap-3 text-lg font-semibold sm:flex-row">
+        <div className="mt-6 flex flex-col gap-3 text-lg font-semibold sm:flex-row">
           <button
             className="rounded-lg bg-primary-accent p-4 text-white duration-200 hover:bg-blue-800"
             type="submit"
@@ -54,7 +55,7 @@ function ForgotPassword() {
             Reset password
           </button>
           <button
-            className="rounded-lg bg-primary-accent p-4 text-white duration-200 hover:bg-blue-800"
+            className="rounded-lg bg-red-500 p-4 text-white duration-200 hover:bg-red-800"
             type="button"
             onClick={() => navigate("/login")}
           >
