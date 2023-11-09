@@ -1,5 +1,5 @@
 import profileImg from "../assets/placeholder-profile-img.png";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineHome, AiFillMessage, AiOutlineBell } from "react-icons/ai";
 import { BsGear } from "react-icons/bs";
 import { RiLogoutBoxRLine } from "react-icons/ri";
