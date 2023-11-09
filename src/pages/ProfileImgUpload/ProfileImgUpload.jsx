@@ -67,6 +67,7 @@ function ProfileImgUpload() {
             style={{ height: 400, width: "100%" }}
             zoomTo={0.5}
             initialAspectRatio={1}
+            aspectRatio={1}
             preview=".img-preview"
             src={image}
             viewMode={1}
