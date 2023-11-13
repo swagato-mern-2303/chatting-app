@@ -4,7 +4,7 @@ import { BsGear } from "react-icons/bs";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { userLoginInfo } from "../userSlice";
+import { userLoginInfo } from "../slices/userSlice";
 
 function Sidebar() {
   const userData = useSelector((state) => state.userLoginInfo.userLoginInfo);
@@ -17,29 +17,31 @@ function Sidebar() {
     navigate("/login");
   };
   return (
-    <div className="w-[180px] rounded-[20px] bg-primary-accent">
+    <div className="rounded-[20px] bg-primary-accent">
       <div className="flex min-h-screen flex-col items-center justify-between pb-[48px] pt-[38px]">
-        <div className="overflow-hidden rounded-full">
-          <Link
-            to="/profileImgUpload"
-            className="group relative before:absolute before:h-full before:w-full before:bg-black before:opacity-0 before:duration-200 before:content-[''] hover:before:opacity-40"
-          >
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 duration-200 group-hover:opacity-100">
-              <FaCloudUploadAlt color="white" size={40} />
-            </span>
-            <picture>
-              <img
-                className="w-[100px] rounded-full"
-                src={userData.photoURL}
-                alt="profile image"
-              />
-            </picture>
-          </Link>
+        <div className="flex flex-col items-center gap-y-2">
+          <div className="overflow-hidden rounded-full">
+            <Link
+              to="/profileImgUpload"
+              className="group relative before:absolute before:h-full before:w-full before:bg-black before:opacity-0 before:duration-200 before:content-[''] hover:before:opacity-40"
+            >
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 duration-200 group-hover:opacity-100">
+                <FaCloudUploadAlt color="white" size={40} />
+              </span>
+              <picture>
+                <img
+                  className="w-[100px] rounded-full"
+                  src={userData.photoURL}
+                  alt="profile image"
+                />
+              </picture>
+            </Link>
+          </div>
+          <h1 className="font-nunito text-xl font-semibold text-white">
+            {userData.displayName}
+          </h1>
         </div>
-        <h1 className="text-xl font-semibold text-white">
-          {userData.displayName}
-        </h1>
-        <ul className="mb-[100px] flex flex-col gap-y-[70px]">
+        <ul className="mb-[50px] flex flex-col gap-y-[70px] px-16">
           <li>
             <a className="text-[#BAD1FF]">
               <AiOutlineHome size={46} />

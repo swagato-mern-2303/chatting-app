@@ -10,7 +10,7 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { useDispatch } from "react-redux";
-import { userLoginInfo } from "../../userSlice";
+import { userLoginInfo } from "../../slices/userSlice";
 
 function Registration() {
   const dispatch = useDispatch();

@@ -3,7 +3,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
-import { userLoginInfo } from "../../userSlice";
+import { userLoginInfo } from "../../slices/userSlice";
+import GroupList from "../../components/GroupList";
+import Friends from "../../components/Friends";
+import UserList from "../../components/UserList";
+import FriendRequests from "../../components/FriendRequests";
+import MyGroups from "../../components/MyGroups";
+import BlockedUsers from "../../components/BlockedUsers";
 
 function Home() {
   const dispatch = useDispatch();
@@ -27,11 +33,22 @@ function Home() {
 
   const [varified, setVerified] = useState(false);
   return (
-    <div>
+    <div className="font-poppins">
       {varified ? (
-        <div className="flex">
+        <div className="flex gap-x-10">
           <Sidebar />
-          <h1 className="text-8xl">home</h1>
+          <div className="flex grow flex-col justify-between pr-5">
+            <div className="grid grid-cols-3 gap-x-5 [&>*]:h-[48vh] [&>*]:rounded-[20px] [&>*]:border-2">
+              <GroupList />
+              <Friends />
+              <UserList />
+            </div>
+            <div className="grid grid-cols-3 gap-x-5 [&>*]:h-[48vh] [&>*]:rounded-[20px] [&>*]:border-2">
+              <FriendRequests />
+              <MyGroups />
+              <BlockedUsers />
+            </div>
+          </div>
         </div>
       ) : (
         <div className="flex min-h-screen items-center justify-center bg-blue-300">
