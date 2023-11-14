@@ -26,9 +26,9 @@ function Home() {
   });
 
   onAuthStateChanged(auth, (user) => {
-    setVerified(user.emailVerified); /* 
+    setVerified(user.emailVerified);
     dispatch(() => userLoginInfo(user));
-    localStorage.setItem("userLoginInfo", JSON.stringify(user)); */
+    localStorage.setItem("userLoginInfo", JSON.stringify(user));
   });
 
   const [varified, setVerified] = useState(false);
