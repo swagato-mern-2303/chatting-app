@@ -4,14 +4,13 @@ import {
   ref,
   uploadString,
 } from "firebase/storage";
-import { useNavigate } from "react-router-dom";
 import { useState, createRef } from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { ToastContainer, Zoom, toast } from "react-toastify";
 import { getAuth, updateProfile } from "firebase/auth";
 
-function ProfileImgUpload() {
+function ProfileImgUpload({ onShowImgPopup }) {
   const auth = getAuth();
 
   const [image, setImage] = useState();
@@ -47,16 +46,14 @@ function ProfileImgUpload() {
             photoURL: downloadURL,
           });
         });
-        setTimeout(() => navigate("/"), 3500);
+        setTimeout(() => onShowImgPopup(false), 3500);
         toast.success("Image uploaded successfully");
       });
     }
   };
 
-  const navigate = useNavigate();
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-primary-accent/20">
+    <div className="flex min-h-screen items-center justify-center bg-blue-200">
       <ToastContainer
         position="top-center"
         autoClose={2500}
@@ -114,7 +111,7 @@ function ProfileImgUpload() {
           <button
             className="rounded-lg bg-red-500 p-4 text-white duration-200 hover:bg-red-800"
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => onShowImgPopup(false)}
           >
             Back to Home Page
           </button>
