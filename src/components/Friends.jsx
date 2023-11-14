@@ -1,5 +1,5 @@
 import { BsThreeDotsVertical } from "react-icons/bs";
-import placeholderImg from "../assets/placeholderImg.jpg";
+import placeholderImg from "../assets/placeholder-img.png";
 
 function Friends() {
   return (

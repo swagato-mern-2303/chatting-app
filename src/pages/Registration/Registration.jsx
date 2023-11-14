@@ -8,18 +8,18 @@ import {
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
-import placeholderProfileImg from "../../assets/placeholder-profile-img.png";
+import { set, getDatabase, ref } from "firebase/database";
+import placeholderProfileImg from "../../assets/placeholder-img.png";
 
 function Registration() {
   const auth = getAuth();
-
+  const db = getDatabase();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const [errors, setErrors] = useState({});
 
   function validate(email, name, password) {
@@ -48,6 +48,12 @@ function Registration() {
     setErrors(validate(email, name, password));
     !Object.keys(validate(email, name, password)).length &&
       createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          set(ref(db, "users/" + userCredential.user.uid), {
+            username: name,
+            email: email,
+          });
+        })
         .then(() => {
           updateProfile(auth.currentUser, {
             displayName: name,
