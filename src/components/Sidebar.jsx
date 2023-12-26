@@ -8,6 +8,13 @@ import { userLoginInfo } from "../slices/userSlice";
 import ProfileImgUpload from "./ProfileImgUpload";
 import { useState } from "react";
 
+const sidebarLinks = [
+  <AiOutlineHome key={1} />,
+  <AiFillMessage key={2} />,
+  <AiOutlineBell key={3} />,
+  <BsGear key={4} />,
+];
+
 function Sidebar() {
   const userData = useSelector((state) => state.userLoginInfo.userLoginInfo);
   const [showImgPopup, setShowImgPopup] = useState(false);
@@ -41,31 +48,18 @@ function Sidebar() {
                 </picture>
               </span>
             </div>
-            <h1 className="font-nunito text-xl font-semibold text-white">
+            <h1 className="text-2xl font-semibold text-white">
               {userData.displayName}
             </h1>
           </div>
-          <ul className="mb-[50px] flex flex-col gap-y-[70px] px-16">
-            <li>
-              <a className="text-[#BAD1FF]">
-                <AiOutlineHome size={46} />
-              </a>
-            </li>
-            <li>
-              <a className="text-[#BAD1FF]">
-                <AiFillMessage size={46} />
-              </a>
-            </li>
-            <li>
-              <a className=" text-[#BAD1FF]">
-                <AiOutlineBell size={46} />
-              </a>
-            </li>
-            <li>
-              <a className=" text-[#BAD1FF]">
-                <BsGear size={46} />
-              </a>
-            </li>
+          <ul className="mb-[50px] flex w-full flex-col gap-y-[10px]">
+            {sidebarLinks.map((item, index) => (
+              <li key={index}>
+                <a className="relative ml-[25px] inline-block cursor-pointer rounded-bl-3xl rounded-tl-3xl py-[30px] pl-[40px] pr-[65px] text-[46px] text-[#bad1ff] duration-200 after:absolute after:right-0 after:top-0 after:h-full after:w-[10px] after:rounded-bl-full after:rounded-tl-full after:bg-primary-accent after:opacity-0 after:duration-200 after:content-[''] hover:bg-white hover:text-primary-accent hover:after:opacity-100">
+                  {item}
+                </a>
+              </li>
+            ))}
           </ul>
           <div>
             <button

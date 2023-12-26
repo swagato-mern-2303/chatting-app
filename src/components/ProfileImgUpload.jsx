@@ -59,14 +59,14 @@ function ProfileImgUpload({ onShowImgPopup }) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-blue-200">
+    <div className="flex min-h-screen items-center justify-center bg-blue-900/40 backdrop-blur-md">
       <ToastContainer
         position="top-center"
         autoClose={2500}
         transition={Zoom}
       />
       <form
-        className="flex max-w-[500px] flex-col rounded-md bg-white p-8 shadow-2xl sm:w-auto"
+        className="flex max-w-[800px] flex-col rounded-xl bg-slate-100 p-24 shadow-2xl sm:w-auto"
         noValidate
       >
         <h1 className="mb-8 text-[32px] font-semibold text-primary-color-400">
@@ -101,12 +101,12 @@ function ProfileImgUpload({ onShowImgPopup }) {
           />
         )}
         <input
-          className="rounded-[8.6px] border-2 px-[27px] py-[20px] text-[20.641px] font-semibold text-primary-color-400"
+          className="rounded-[8.6px] border-2 border-blue-800/40 px-[27px] py-[20px] text-[20.641px] font-semibold text-primary-color-400"
           type="file"
           onChange={handleChange}
         />
 
-        <div className="mt-16 flex flex-col gap-3 text-lg font-semibold sm:flex-row">
+        <div className="mx-auto mt-16 flex flex-col gap-3 text-lg font-semibold sm:flex-row">
           <button
             className="rounded-lg bg-primary-accent p-4 text-white duration-200 hover:bg-blue-800"
             type="button"
