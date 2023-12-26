@@ -1,5 +1,4 @@
 import { BsThreeDotsVertical } from "react-icons/bs";
-import placeholderImg from "../assets/placeholder-img.png";
 import { getDatabase, onValue, push, ref, remove } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -10,7 +9,6 @@ function Friends() {
   const currentUserData = useSelector(
     (state) => state.userLoginInfo.userLoginInfo,
   );
-
   const [friendsList, setFriendsList] = useState([]);
 
   useEffect(() => {
@@ -56,22 +54,26 @@ function Friends() {
 export default Friends;
 
 function Friend({ db, currentUserData, data }) {
-  const friendName =
+  const friendData =
     currentUserData.uid === data.receiverId
-      ? data.senderName
-      : data.receiverName;
+      ? { friendName: data.senderName, friendImg: data.senderImg }
+      : { friendName: data.receiverName, friendImg: data.receiverImg };
 
   const blockedUserId =
     data.senderId === currentUserData.uid ? data.receiverId : data.senderId;
   const blockedUserName =
     data.senderId === currentUserData.uid ? data.receiverName : data.senderName;
+  const blockedUserImg =
+    data.senderId === currentUserData.uid ? data.receiverImg : data.senderImg;
 
   const handleBlock = () => {
     push(ref(db, "blocks/"), {
       blockedByUserName: currentUserData.displayName,
       blockedByUserId: currentUserData.uid,
+      blockedByUserImg: currentUserData.photoURL,
       blockedUserId,
       blockedUserName,
+      blockedUserImg,
     }).then(() => {
       remove(ref(db, "friends/" + data.id));
     });
@@ -81,11 +83,11 @@ function Friend({ db, currentUserData, data }) {
       <div className="flex items-center gap-x-3">
         <img
           className="w-[70px] rounded-full"
-          src={placeholderImg}
+          src={friendData.friendImg}
           alt="profileImg"
         />
         <div>
-          <h4 className="text-lg font-semibold">{friendName}</h4>
+          <h4 className="text-lg font-semibold">{friendData.friendName}</h4>
           <p className="text-sm font-medium text-slate-500">Hi...</p>
         </div>
       </div>

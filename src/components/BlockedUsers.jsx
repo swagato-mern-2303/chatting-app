@@ -1,6 +1,5 @@
 import { BsThreeDotsVertical } from "react-icons/bs";
-import placeholderImg from "../assets/placeholder-img.png";
-import { getDatabase, onValue, ref, remove } from "firebase/database";
+import { getDatabase, onValue, ref, remove, push } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -16,8 +15,11 @@ function BlockedUsers() {
     onValue(ref(db, "blocks/"), (snapshot) => {
       const blockedListArr = [];
       snapshot.forEach((item) => {
-        item.val().blockedByUserId === currentUserData.uid &&
+        if (item.val().blockedByUserId === currentUserData.uid) {
           blockedListArr.push({ ...item.val(), id: item.key });
+        } else if (item.val().blockedUserId === currentUserData.uid) {
+          blockedListArr.push({ ...item.val(), id: item.key });
+        }
       });
       setBlockedList(blockedListArr);
     });
@@ -33,7 +35,12 @@ function BlockedUsers() {
         <div className="h-full pr-3">
           {blockedList.length ? (
             blockedList.map((item, index) => (
-              <Blocked db={db} key={index} data={item} />
+              <Blocked
+                db={db}
+                key={index}
+                data={item}
+                currentUserData={currentUserData}
+              />
             ))
           ) : (
             <h3 className="flex h-full items-center justify-center text-xl font-bold opacity-50">
@@ -48,31 +55,45 @@ function BlockedUsers() {
 
 export default BlockedUsers;
 
-function Blocked({ db, data }) {
+function Blocked({ db, data, currentUserData }) {
   const handleUnblock = () => {
-    remove(ref(db, "blocks/" + data.id));
+    push(ref(db, "friends/"), {
+      senderName: data.blockedByUserName,
+      senderId: data.blockedByUserId,
+      senderImg: data.blockedByUserImg,
+      receiverName: data.blockedUserName,
+      receiverId: data.blockedUserId,
+      receiverImg: data.blockedUserImg,
+    }).then(() => remove(ref(db, "blocks/" + data.id)));
   };
   return (
     <div className="flex items-center justify-between border-b border-black/25 py-3 pr-10">
       <div className="flex items-center gap-x-3">
         <img
           className="w-[70px] rounded-full"
-          src={placeholderImg}
+          src={
+            currentUserData.uid === data.blockedByUserId
+              ? data.blockedUserImg
+              : data.blockedByUserImg
+          }
           alt="profileImg"
         />
         <div>
-          <h4 className="text-lg font-semibold">{data.blockedUserName}</h4>
-          <p className="text-[10px] font-medium text-black/50">
-            Today, 12:22pm
-          </p>
+          <h4 className="text-lg font-semibold">
+            {currentUserData.uid === data.blockedByUserId
+              ? data.blockedUserName
+              : data.blockedByUserName}
+          </h4>
         </div>
       </div>
-      <button
-        onClick={handleUnblock}
-        className="rounded-[5px] bg-primary-accent px-2 text-xl font-semibold text-white"
-      >
-        Unblock
-      </button>
+      {data.blockedByUserId === currentUserData.uid && (
+        <button
+          onClick={handleUnblock}
+          className="rounded-[5px] bg-primary-accent px-2 text-xl font-semibold text-white"
+        >
+          Unblock
+        </button>
+      )}
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import { getDatabase, ref, onValue, push } from "firebase/database";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import placeholderImg from "../assets/placeholder-img.png";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -107,8 +106,10 @@ function User({
     push(ref(db, "friendrequests/"), {
       senderName: currentUserData.displayName,
       senderId: currentUserData.uid,
+      senderImg: currentUserData.photoURL,
       receiverName: userData.username,
       receiverId: userData.userId,
+      receiverImg: userData.profileImg,
     });
   };
 
@@ -117,7 +118,7 @@ function User({
       <div className="flex items-center gap-x-3">
         <img
           className="w-[70px] rounded-full"
-          src={placeholderImg}
+          src={userData.profileImg}
           alt="profileImg"
         />
         <div>

@@ -52,6 +52,7 @@ function Registration() {
           set(ref(db, "users/" + userCredential.user.uid), {
             username: name,
             email: email,
+            profileImg: placeholderProfileImg,
           });
         })
         .then(() => {

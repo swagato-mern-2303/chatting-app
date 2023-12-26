@@ -9,9 +9,11 @@ import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { ToastContainer, Zoom, toast } from "react-toastify";
 import { getAuth, updateProfile } from "firebase/auth";
+import { update, ref as databaseref, getDatabase } from "firebase/database";
 
 function ProfileImgUpload({ onShowImgPopup }) {
   const auth = getAuth();
+  const db = getDatabase();
 
   const [image, setImage] = useState();
   const cropperRef = createRef();
@@ -44,6 +46,10 @@ function ProfileImgUpload({ onShowImgPopup }) {
         getDownloadURL(storageRef).then((downloadURL) => {
           updateProfile(auth.currentUser, {
             photoURL: downloadURL,
+          }).then(() => {
+            update(databaseref(db, "users/" + auth.currentUser.uid), {
+              profileImg: downloadURL,
+            });
           });
         });
         setTimeout(() => onShowImgPopup(false), 3500);
