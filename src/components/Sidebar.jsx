@@ -48,20 +48,20 @@ function Sidebar() {
                 </picture>
               </span>
             </div>
-            <h1 className="text-2xl font-semibold text-white">
+            <h1 className="text-center text-xl font-semibold text-white">
               {userData.displayName}
             </h1>
           </div>
           <ul className="mb-[50px] flex w-full flex-col gap-y-[10px]">
             {sidebarLinks.map((item, index) => (
               <li key={index}>
-                <a className="relative ml-[25px] inline-block cursor-pointer rounded-bl-3xl rounded-tl-3xl py-[30px] pl-[40px] pr-[65px] text-[46px] text-[#bad1ff] duration-200 after:absolute after:right-0 after:top-0 after:h-full after:w-[10px] after:rounded-bl-full after:rounded-tl-full after:bg-primary-accent after:opacity-0 after:duration-200 after:content-[''] hover:bg-white hover:text-primary-accent hover:after:opacity-100">
+                <a className="relative ml-[25px] inline-block cursor-pointer rounded-bl-3xl rounded-tl-3xl py-[20px] pl-[40px] pr-[65px] text-[46px] text-[#bad1ff] duration-200 after:absolute after:right-0 after:top-0 after:h-full after:w-[10px] after:rounded-bl-full after:rounded-tl-full after:bg-primary-accent after:opacity-0 after:duration-200 after:content-[''] hover:bg-white hover:text-primary-accent hover:after:opacity-100">
                   {item}
                 </a>
               </li>
             ))}
           </ul>
-          <div>
+          <div className="py-0">
             <button
               className="text-[#a3b6de] duration-200 hover:text-white"
               onClick={handleSignout}
