@@ -3,6 +3,9 @@ import Login from "./pages/Login/Login";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import Home from "./pages/Home/Home";
+import Messages from "./pages/Messages/Messages";
+import Notifications from "./pages/Notifications/Notifications";
+import Settings from "./pages/Settings/Settngs";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +23,18 @@ const router = createBrowserRouter([
   {
     path: "/forgotpassword",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/messages",
+    element: <Messages />,
+  },
+  {
+    path: "/notifications",
+    element: <Notifications />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
   },
 ]);
 

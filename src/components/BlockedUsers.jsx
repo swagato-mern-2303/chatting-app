@@ -57,14 +57,21 @@ export default BlockedUsers;
 
 function Blocked({ db, data, currentUserData }) {
   const handleUnblock = () => {
-    push(ref(db, "friends/"), {
-      senderName: data.blockedByUserName,
-      senderId: data.blockedByUserId,
-      senderImg: data.blockedByUserImg,
-      receiverName: data.blockedUserName,
-      receiverId: data.blockedUserId,
-      receiverImg: data.blockedUserImg,
-    }).then(() => remove(ref(db, "blocks/" + data.id)));
+    confirm(
+      `Do you want to unblock ${
+        currentUserData.uid === data.blockedByUserId
+          ? data.blockedUserName
+          : data.blockedByUserName
+      }`,
+    ) &&
+      push(ref(db, "friends/"), {
+        senderName: data.blockedByUserName,
+        senderId: data.blockedByUserId,
+        senderImg: data.blockedByUserImg,
+        receiverName: data.blockedUserName,
+        receiverId: data.blockedUserId,
+        receiverImg: data.blockedUserImg,
+      }).then(() => remove(ref(db, "blocks/" + data.id)));
   };
   return (
     <div className="flex items-center justify-between border-b border-black/25 py-3 pr-10">

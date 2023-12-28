@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { AiOutlineHome, AiFillMessage, AiOutlineBell } from "react-icons/ai";
 import { BsGear } from "react-icons/bs";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -9,10 +9,10 @@ import ProfileImgUpload from "./ProfileImgUpload";
 import { useState } from "react";
 
 const sidebarLinks = [
-  <AiOutlineHome key={1} />,
-  <AiFillMessage key={2} />,
-  <AiOutlineBell key={3} />,
-  <BsGear key={4} />,
+  { linkTo: "/", icon: <AiOutlineHome /> },
+  { linkTo: "/messages", icon: <AiFillMessage /> },
+  { linkTo: "/notifications", icon: <AiOutlineBell /> },
+  { linkTo: "/settings", icon: <BsGear /> },
 ];
 
 function Sidebar() {
@@ -28,7 +28,7 @@ function Sidebar() {
   };
   return (
     <>
-      <div className="rounded-[20px] bg-primary-accent">
+      <div className="max-w-[176px] rounded-[20px] bg-primary-accent font-poppins">
         <div className="flex min-h-screen flex-col items-center justify-between pb-[48px] pt-[38px]">
           <div className="flex flex-col items-center gap-y-2">
             <div className="overflow-hidden rounded-full">
@@ -55,9 +55,14 @@ function Sidebar() {
           <ul className="mb-[50px] flex w-full flex-col gap-y-[10px]">
             {sidebarLinks.map((item, index) => (
               <li key={index}>
-                <a className="relative ml-[25px] inline-block cursor-pointer rounded-bl-3xl rounded-tl-3xl py-[20px] pl-[40px] pr-[65px] text-[46px] text-[#bad1ff] duration-200 after:absolute after:right-0 after:top-0 after:h-full after:w-[10px] after:rounded-bl-full after:rounded-tl-full after:bg-primary-accent after:opacity-0 after:duration-200 after:content-[''] hover:bg-white hover:text-primary-accent hover:after:opacity-100">
-                  {item}
-                </a>
+                <NavLink
+                  to={item.linkTo}
+                  className={
+                    "relative ml-[25px] inline-block cursor-pointer rounded-bl-3xl rounded-tl-3xl py-[20px] pl-[40px] pr-[65px] text-[46px] text-[#bad1ff] duration-200 after:absolute after:right-0 after:top-0 after:h-full after:w-[10px] after:rounded-bl-full after:rounded-tl-full after:bg-primary-accent after:duration-200 after:content-[''] hover:bg-white hover:text-primary-accent"
+                  }
+                >
+                  {item.icon}
+                </NavLink>
               </li>
             ))}
           </ul>

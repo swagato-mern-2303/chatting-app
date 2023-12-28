@@ -67,16 +67,17 @@ function Friend({ db, currentUserData, data }) {
     data.senderId === currentUserData.uid ? data.receiverImg : data.senderImg;
 
   const handleBlock = () => {
-    push(ref(db, "blocks/"), {
-      blockedByUserName: currentUserData.displayName,
-      blockedByUserId: currentUserData.uid,
-      blockedByUserImg: currentUserData.photoURL,
-      blockedUserId,
-      blockedUserName,
-      blockedUserImg,
-    }).then(() => {
-      remove(ref(db, "friends/" + data.id));
-    });
+    confirm(`Do you want to block ${blockedUserName}`) &&
+      push(ref(db, "blocks/"), {
+        blockedByUserName: currentUserData.displayName,
+        blockedByUserId: currentUserData.uid,
+        blockedByUserImg: currentUserData.photoURL,
+        blockedUserId,
+        blockedUserName,
+        blockedUserImg,
+      }).then(() => {
+        remove(ref(db, "friends/" + data.id));
+      });
   };
   return (
     <div className="flex items-center justify-between border-b border-black/25 py-3">

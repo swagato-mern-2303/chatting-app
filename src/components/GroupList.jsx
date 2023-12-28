@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getDatabase, onValue, push, ref } from "firebase/database";
 import { useSelector } from "react-redux";
 
-function GroupList() {
+function GroupList({ className }) {
   const db = getDatabase();
   const currentUserData = useSelector(
     (state) => state.userLoginInfo.userLoginInfo,
@@ -24,7 +24,7 @@ function GroupList() {
   }, []);
 
   return (
-    <div>
+    <div className={className}>
       <div className="relative h-full pb-1 pl-5">
         <div className="absolute inset-x-5 flex items-center justify-between bg-white pt-3">
           <h3 className="text-xl font-semibold">Group List</h3>
@@ -76,9 +76,6 @@ function Group({ data }) {
           </p>
         </div>
       </div>
-      <button className="rounded-[5px] bg-primary-accent px-5 text-xl font-semibold text-white">
-        Join
-      </button>
     </div>
   );
 }
