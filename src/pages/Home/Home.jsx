@@ -40,7 +40,7 @@ function Home() {
           <div className="flex grow flex-col justify-between pr-5">
             <div className="grid grid-cols-3 gap-x-5 [&>*]:h-[48vh] [&>*]:rounded-[20px] [&>*]:shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]">
               <GroupList />
-              <Friends />
+              <Friends button="block" />
               <UserList />
             </div>
             <div className="grid grid-cols-3 gap-x-5 [&>*]:h-[48vh] [&>*]:rounded-[20px] [&>*]:shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]">

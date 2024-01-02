@@ -1,9 +1,10 @@
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { getDatabase, onValue, push, ref, remove } from "firebase/database";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectedChatInfo } from "../slices/selectedChatSlice";
 
-function Friends() {
+function Friends({ button }) {
   const db = getDatabase();
 
   const currentUserData = useSelector(
@@ -38,6 +39,7 @@ function Friends() {
                 db={db}
                 data={item}
                 currentUserData={currentUserData}
+                button={button}
               />
             ))
           ) : (
@@ -53,7 +55,9 @@ function Friends() {
 
 export default Friends;
 
-function Friend({ db, currentUserData, data }) {
+function Friend({ db, currentUserData, data, button }) {
+  const dispatch = useDispatch();
+
   const friendData =
     currentUserData.uid === data.receiverId
       ? { friendName: data.senderName, friendImg: data.senderImg }
@@ -79,6 +83,24 @@ function Friend({ db, currentUserData, data }) {
         remove(ref(db, "friends/" + data.id));
       });
   };
+
+  const handleMessage = function () {
+    currentUserData.uid === data.senderId
+      ? dispatch(
+          selectedChatInfo({
+            selectedName: data.receiverName,
+            selectedId: data.receiverId,
+            selectedImg: data.receiverImg,
+          }),
+        )
+      : dispatch(
+          selectedChatInfo({
+            selectedName: data.senderName,
+            selectedId: data.senderId,
+            selectedImg: data.senderImg,
+          }),
+        );
+  };
   return (
     <div className="flex items-center justify-between border-b border-black/25 py-3">
       <div className="flex items-center gap-x-3">
@@ -92,12 +114,21 @@ function Friend({ db, currentUserData, data }) {
           <p className="text-sm font-medium text-slate-500">Hi...</p>
         </div>
       </div>
-      <button
-        onClick={handleBlock}
-        className="rounded-[5px] bg-primary-accent px-2 text-xl font-semibold text-white"
-      >
-        Block
-      </button>
+      {button === "message" ? (
+        <button
+          className="rounded-[5px] bg-primary-accent px-2 text-xl font-semibold text-white"
+          onClick={handleMessage}
+        >
+          Message
+        </button>
+      ) : (
+        <button
+          onClick={handleBlock}
+          className="rounded-[5px] bg-red-600 px-2 text-xl font-semibold text-white"
+        >
+          Block
+        </button>
+      )}
     </div>
   );
 }
