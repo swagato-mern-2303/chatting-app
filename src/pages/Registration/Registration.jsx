@@ -181,7 +181,7 @@ function RegistrationInput({
             type === "password" ? null : "hidden"
           }`}
         >
-          {showPassword ? (
+          {!showPassword ? (
             <AiFillEyeInvisible size={24} />
           ) : (
             <AiFillEye size={24} />

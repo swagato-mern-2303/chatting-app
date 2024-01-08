@@ -10,6 +10,8 @@ function UserList() {
   const [friendRequestsIdList, setFriendRequestsIdList] = useState([]);
   const [friendsIdList, setFriendsIdList] = useState([]);
   const [blockedIdList, setBlockedIdList] = useState({});
+  const [searchList, setSearchList] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
 
   const currentUserData = useSelector(
     (state) => state.userLoginInfo.userLoginInfo,
@@ -61,26 +63,73 @@ function UserList() {
     });
   }, []);
 
+  const handleSearch = function (e) {
+    setSearchInput(e.target.value);
+    const arr = [];
+    e.target.value.length
+      ? userList.forEach(
+          (item) =>
+            item.username
+              .toLowerCase()
+              .includes(e.target.value.toLowerCase()) && arr.push(item),
+        )
+      : null;
+
+    setSearchList(arr);
+  };
+
   return (
     <div className="relative overflow-hidden pb-1 pl-5">
-      <div className="absolute inset-x-5 flex items-center justify-between bg-white pt-3">
-        <h3 className="text-xl font-semibold">User List</h3>
-        <BsThreeDotsVertical className="text-primary-accent" size={20} />
+      <div className="absolute inset-x-5 bg-white pt-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold">User List</h3>
+          <BsThreeDotsVertical className="text-primary-accent" size={20} />
+        </div>
+        <div className="mt-2">
+          <input
+            className="mx-auto w-3/4 rounded-lg px-2 py-1 shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] outline-none placeholder:pl-10 focus-visible:shadow-[0_4px_4px_0_rgba(0,0,0,0.50)]"
+            type="text"
+            placeholder="Search"
+            value={searchInput}
+            onChange={(e) => handleSearch(e)}
+          />
+        </div>
       </div>
-      <div className="h-full overflow-y-scroll pt-10">
+
+      <div className="mt-20 h-full overflow-y-scroll">
         <div className="h-full pr-3">
           {userList.length ? (
-            userList.map((item, index) => (
-              <User
-                db={db}
-                friendsData={friendsIdList}
-                friendRequestsdata={friendRequestsIdList}
-                currentUserData={currentUserData}
-                blockedData={blockedIdList}
-                userData={item}
-                key={index}
-              />
-            ))
+            searchInput.length ? (
+              searchList.length ? (
+                searchList.map((item, index) => (
+                  <User
+                    db={db}
+                    friendsData={friendsIdList}
+                    friendRequestsdata={friendRequestsIdList}
+                    currentUserData={currentUserData}
+                    blockedData={blockedIdList}
+                    userData={item}
+                    key={index}
+                  />
+                ))
+              ) : (
+                <h3 className="flex h-full items-center justify-center text-xl font-bold opacity-50">
+                  No user found
+                </h3>
+              )
+            ) : (
+              userList.map((item, index) => (
+                <User
+                  db={db}
+                  friendsData={friendsIdList}
+                  friendRequestsdata={friendRequestsIdList}
+                  currentUserData={currentUserData}
+                  blockedData={blockedIdList}
+                  userData={item}
+                  key={index}
+                />
+              ))
+            )
           ) : (
             <h3 className="flex h-full items-center justify-center text-xl font-bold opacity-50">
               No user available

@@ -6,6 +6,7 @@ import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getDatabase, ref, push, onValue } from "firebase/database";
+import moment from "moment";
 
 export default function MessageBox() {
   const db = getDatabase();
@@ -18,20 +19,27 @@ export default function MessageBox() {
   );
 
   const [messageInput, setMessageInput] = useState("");
+  const [imgInput, setImgInput] = useState("");
   const [messageDisplay, setMessageDisplay] = useState([]);
+  const [showImgInput, setShowImgInput] = useState(false);
 
   const handleSubmitMessage = function (e) {
     e.preventDefault();
 
-    if (!messageInput) return;
+    if (!messageInput && !imgInput) return;
 
     push(ref(db, "messages/"), {
       senderId: currentUserData.uid,
       receiverId: selectedChatInfo?.selectedId,
       message: messageInput,
-      time: new Date().toLocaleTimeString(),
+      img: imgInput,
+      time: `${new Date().getFullYear()} ${
+        new Date().getMonth() + 1
+      } ${new Date().getDate()} ${new Date().getHours()} ${new Date().getMinutes()}`,
     }).then(() => {
       setMessageInput("");
+      setShowImgInput(false);
+      setImgInput("");
     });
   };
 
@@ -51,9 +59,11 @@ export default function MessageBox() {
   }, [selectedChatInfo]);
 
   useEffect(() => {
-    document
-      .getElementById("messages")
-      ?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+    document.getElementById("messages")?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "nearest",
+    });
   }, [messageDisplay]);
 
   return (
@@ -87,7 +97,7 @@ export default function MessageBox() {
           <div className="h-[80%] grow overflow-y-scroll border-b-2 border-b-black/20 py-[30px]">
             <div
               id="messages"
-              className={`flex h-full flex-col gap-y-4 pl-4 pr-6 ${
+              className={`flex flex-col gap-y-4 pl-4 pr-6 ${
                 !messageDisplay.length ? "justify-center" : null
               }`}
             >
@@ -123,7 +133,14 @@ export default function MessageBox() {
                   <button>
                     <MdOutlineEmojiEmotions size={20} />
                   </button>
-                  <button>
+                  <input
+                    className={`absolute -top-[150%] right-0 rounded-lg bg-blue-200 shadow-md ${
+                      showImgInput ? null : "hidden"
+                    }`}
+                    type="file"
+                    onChange={(e) => setImgInput(e.target.value)}
+                  />
+                  <button onClick={() => setShowImgInput((cur) => !cur)}>
                     <IoCameraOutline size={20} />
                   </button>
                 </div>
@@ -148,6 +165,7 @@ function MessageBubbleReceive({ messageData }) {
       <div className="relative">
         <div className="inline-block max-w-[80%] rounded-[10px] bg-[#f1f1f1] px-12 py-3 font-poppins font-medium">
           {messageData.message}
+          {messageData.img && <img src={messageData.img} alt="image" />}
         </div>
         <div className="absolute bottom-0 left-0 -translate-x-1/4">
           <svg
@@ -164,7 +182,9 @@ function MessageBubbleReceive({ messageData }) {
           </svg>
         </div>
       </div>
-      <p className="text-xs text-black/25">{messageData.time}</p>
+      <p className="text-xs text-black/25">
+        {moment(messageData.time, "YYYY MM DD hour minutes").fromNow()}
+      </p>
     </div>
   );
 }
@@ -175,6 +195,7 @@ function MessageBubbleSend({ messageData }) {
       <div className="relative">
         <div className="inline-block max-w-[80%] rounded-[10px] bg-primary-accent px-12 py-3 text-left font-poppins font-medium text-white">
           {messageData.message}
+          {messageData.img && <img src={messageData.img} alt="image" />}
         </div>
         <div className="absolute bottom-0 right-0 translate-x-1/4">
           <svg
@@ -191,62 +212,9 @@ function MessageBubbleSend({ messageData }) {
           </svg>
         </div>
       </div>
-      <p className="text-xs text-black/25">{messageData.time}</p>
+      <p className="text-xs text-black/25">
+        {moment(messageData.time, "YYYY MM DD hour minutes").fromNow()}
+      </p>
     </div>
   );
 }
-
-/* function MessageBubbleSendImg() {
-  return (
-    <div className="text-right">
-      <div className="relative">
-        <div className="inline-block w-2/5 rounded-[10px] bg-primary-accent p-3 font-poppins font-medium text-white">
-          <img className="inline-block" src={image} alt="" />
-        </div>
-        <div className="absolute bottom-0 right-0 -z-10 translate-x-1/4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="51"
-            height="21"
-            viewBox="0 0 51 21"
-            fill="none"
-          >
-            <path
-              d="M24.714 0.8332C25.4101 0.334971 26.346 0.334971 27.0421 0.833199L50.1509 17.3737C51.7323 18.5055 50.9315 21 48.9869 21H2.76924C0.824561 21 0.0238247 18.5055 1.60517 17.3737L24.714 0.8332Z"
-              fill="#5F35F5"
-            />
-          </svg>
-        </div>
-      </div>
-      <p className="text-xs text-black/25">Today, 2.01pm</p>
-    </div>
-  );
-}
-
-function MessageBubbleReceiveImg() {
-  return (
-    <div>
-      <div className="relative">
-        <div className="inline-block w-2/5 rounded-[10px] bg-[#f1f1f1] p-3 font-poppins font-medium leading-none">
-          <img className="inline-block rounded-[10px]" src={image} />
-        </div>
-        <div className="absolute bottom-0 left-0 -z-30 -translate-x-1/4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="51"
-            height="21"
-            viewBox="0 0 51 21"
-            fill="none"
-          >
-            <path
-              d="M24.714 0.8332C25.4101 0.334971 26.346 0.334971 27.0421 0.833199L50.1509 17.3737C51.7323 18.5055 50.9315 21 48.9869 21H2.76924C0.824561 21 0.0238247 18.5055 1.60517 17.3737L24.714 0.8332Z"
-              fill="#f1f1f1"
-            />
-          </svg>
-        </div>
-      </div>
-      <p className="text-xs text-black/25">Today, 2.01pm</p>
-    </div>
-  );
-}
- */
