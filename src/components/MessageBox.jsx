@@ -1,15 +1,23 @@
-// import image from "../assets/registration-page-img.png";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoIosSend } from "react-icons/io";
-import { IoCameraOutline } from "react-icons/io5";
+import { FaImages } from "react-icons/fa";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getDatabase, ref, push, onValue } from "firebase/database";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
 import moment from "moment";
+import EmojiPicker from "emoji-picker-react";
+import ModalImage from "react-modal-image";
 
 export default function MessageBox() {
   const db = getDatabase();
+  const storage = getStorage();
 
   const currentUserData = useSelector(
     (state) => state.userLoginInfo.userLoginInfo,
@@ -19,28 +27,45 @@ export default function MessageBox() {
   );
 
   const [messageInput, setMessageInput] = useState("");
-  const [imgInput, setImgInput] = useState("");
   const [messageDisplay, setMessageDisplay] = useState([]);
-  const [showImgInput, setShowImgInput] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const handleSubmitMessage = function (e) {
     e.preventDefault();
 
-    if (!messageInput && !imgInput) return;
+    if (!messageInput) return;
 
     push(ref(db, "messages/"), {
       senderId: currentUserData.uid,
       receiverId: selectedChatInfo?.selectedId,
       message: messageInput,
-      img: imgInput,
       time: `${new Date().getFullYear()} ${
         new Date().getMonth() + 1
       } ${new Date().getDate()} ${new Date().getHours()} ${new Date().getMinutes()}`,
     }).then(() => {
       setMessageInput("");
-      setShowImgInput(false);
-      setImgInput("");
     });
+  };
+
+  const handleSendImg = function (e) {
+    const imgRef = storageRef(storage, e.target.files[0].name);
+
+    uploadBytes(imgRef, e.target.files[0]).then(() => {
+      getDownloadURL(imgRef).then((url) => {
+        push(ref(db, "messages/"), {
+          senderId: currentUserData.uid,
+          receiverId: selectedChatInfo?.selectedId,
+          img: url,
+          time: `${new Date().getFullYear()} ${
+            new Date().getMonth() + 1
+          } ${new Date().getDate()} ${new Date().getHours()} ${new Date().getMinutes()}`,
+        });
+      });
+    });
+  };
+
+  const handleInsertEmoji = function (e) {
+    setMessageInput((cur) => cur + e.emoji);
   };
 
   useEffect(() => {
@@ -124,25 +149,37 @@ export default function MessageBox() {
             >
               <div className="relative flex grow gap-x-[6px] rounded-[10px] bg-[#f1f1f1] pr-[15px]">
                 <input
+                  onFocus={() => setShowEmojiPicker(false)}
                   className="grow bg-transparent pl-[15px] focus-visible:outline-none"
                   type="text"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                 />
-                <div className="right-[15px] top-0 [&>*]:px-[4px] [&>*]:py-[10px] [&>*]:text-black/50">
-                  <button>
+                {showEmojiPicker && (
+                  <div
+                    id="emoji-div"
+                    className="absolute bottom-10 right-0 rounded-lg border-2"
+                  >
+                    <EmojiPicker onEmojiClick={handleInsertEmoji} />
+                  </div>
+                )}
+
+                <div className="relative flex items-center gap-x-2 text-black/50">
+                  <button
+                    type="button"
+                    className="p-1"
+                    onClick={() => setShowEmojiPicker((cur) => !cur)}
+                  >
                     <MdOutlineEmojiEmotions size={20} />
                   </button>
-                  <input
-                    className={`absolute -top-[150%] right-0 rounded-lg bg-blue-200 shadow-md ${
-                      showImgInput ? null : "hidden"
-                    }`}
-                    type="file"
-                    onChange={(e) => setImgInput(e.target.value)}
-                  />
-                  <button onClick={() => setShowImgInput((cur) => !cur)}>
-                    <IoCameraOutline size={20} />
-                  </button>
+                  <label className="cursor-pointer p-1">
+                    <FaImages size={20} />
+                    <input
+                      className="hidden"
+                      type="file"
+                      onChange={(e) => handleSendImg(e)}
+                    />
+                  </label>
                 </div>
               </div>
               <button
@@ -163,24 +200,31 @@ function MessageBubbleReceive({ messageData }) {
   return (
     <div>
       <div className="relative">
-        <div className="inline-block max-w-[80%] rounded-[10px] bg-[#f1f1f1] px-12 py-3 font-poppins font-medium">
-          {messageData.message}
-          {messageData.img && <img src={messageData.img} alt="image" />}
-        </div>
-        <div className="absolute bottom-0 left-0 -translate-x-1/4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="51"
-            height="21"
-            viewBox="0 0 51 21"
-            fill="none"
-          >
-            <path
-              d="M24.714 0.8332C25.4101 0.334971 26.346 0.334971 27.0421 0.833199L50.1509 17.3737C51.7323 18.5055 50.9315 21 48.9869 21H2.76924C0.824561 21 0.0238247 18.5055 1.60517 17.3737L24.714 0.8332Z"
-              fill="#f1f1f1"
-            />
-          </svg>
-        </div>
+        {messageData.img ? (
+          <div className="inline-block max-w-[80%] rounded-[10px] bg-[#f1f1f1] p-3 font-poppins font-medium">
+            <ModalImage small={messageData.img} large={messageData.img} />
+          </div>
+        ) : (
+          <div className="inline-block max-w-[80%] rounded-[10px] bg-[#f1f1f1] px-12 py-3 font-poppins font-medium">
+            {messageData.message}
+          </div>
+        )}
+        {!messageData.img && (
+          <div className="absolute bottom-0 left-0 -translate-x-1/4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="51"
+              height="21"
+              viewBox="0 0 51 21"
+              fill="none"
+            >
+              <path
+                d="M24.714 0.8332C25.4101 0.334971 26.346 0.334971 27.0421 0.833199L50.1509 17.3737C51.7323 18.5055 50.9315 21 48.9869 21H2.76924C0.824561 21 0.0238247 18.5055 1.60517 17.3737L24.714 0.8332Z"
+                fill="#f1f1f1"
+              />
+            </svg>
+          </div>
+        )}
       </div>
       <p className="text-xs text-black/25">
         {moment(messageData.time, "YYYY MM DD hour minutes").fromNow()}
@@ -193,24 +237,31 @@ function MessageBubbleSend({ messageData }) {
   return (
     <div className="text-right">
       <div className="relative">
-        <div className="inline-block max-w-[80%] rounded-[10px] bg-primary-accent px-12 py-3 text-left font-poppins font-medium text-white">
-          {messageData.message}
-          {messageData.img && <img src={messageData.img} alt="image" />}
-        </div>
-        <div className="absolute bottom-0 right-0 translate-x-1/4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="51"
-            height="21"
-            viewBox="0 0 51 21"
-            fill="none"
-          >
-            <path
-              d="M24.714 0.8332C25.4101 0.334971 26.346 0.334971 27.0421 0.833199L50.1509 17.3737C51.7323 18.5055 50.9315 21 48.9869 21H2.76924C0.824561 21 0.0238247 18.5055 1.60517 17.3737L24.714 0.8332Z"
-              fill="#5F35F5"
-            />
-          </svg>
-        </div>
+        {messageData.img ? (
+          <div className="inline-block max-w-[80%] rounded-[10px] bg-primary-accent p-3 text-left font-poppins font-medium text-white">
+            <ModalImage small={messageData.img} large={messageData.img} />
+          </div>
+        ) : (
+          <div className="inline-block max-w-[80%] rounded-[10px] bg-primary-accent px-12 py-3 text-left font-poppins font-medium text-white">
+            {messageData.message}
+          </div>
+        )}
+        {!messageData.img && (
+          <div className="absolute bottom-0 right-0 translate-x-1/4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="51"
+              height="21"
+              viewBox="0 0 51 21"
+              fill="none"
+            >
+              <path
+                d="M24.714 0.8332C25.4101 0.334971 26.346 0.334971 27.0421 0.833199L50.1509 17.3737C51.7323 18.5055 50.9315 21 48.9869 21H2.76924C0.824561 21 0.0238247 18.5055 1.60517 17.3737L24.714 0.8332Z"
+                fill="#5F35F5"
+              />
+            </svg>
+          </div>
+        )}
       </div>
       <p className="text-xs text-black/25">
         {moment(messageData.time, "YYYY MM DD hour minutes").fromNow()}
