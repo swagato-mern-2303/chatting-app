@@ -25,11 +25,13 @@ function Home() {
     !userData && navigate("/login");
   });
 
-  onAuthStateChanged(auth, (user) => {
-    setVerified(user.emailVerified);
-    dispatch(() => userLoginInfo(user));
-    localStorage.setItem("userLoginInfo", JSON.stringify(user));
-  });
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      setVerified(user.emailVerified);
+      dispatch(() => userLoginInfo(user));
+      localStorage.setItem("userLoginInfo", JSON.stringify(user));
+    });
+  }, []);
 
   const [varified, setVerified] = useState(false);
   return (
